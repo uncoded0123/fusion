@@ -13,7 +13,7 @@ def freq_check():
             except Exception as e:
                 print(f"{rate} Hz: Not supported")
 
-    print_supported_sample_rates(device=0)  # Replace with your device index
+    print_supported_sample_rates(device=4)  # Replace with your device index
 
 
 def mic_search():

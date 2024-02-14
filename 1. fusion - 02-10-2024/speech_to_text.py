@@ -1,11 +1,11 @@
-# speech_to_text_ai.py modifications
+# instructions for vosk: https://medium.com/analytics-vidhya/offline-speech-recognition-made-easy-with-vosk-c61f7b720215
 import queue
 import sys
 import sounddevice as sd
 from vosk import Model, KaldiRecognizer
 
 class ContinuousSpeechToText:
-    def __init__(self, lang="en-us", samplerate=48000, device_index=None):  # Add device_index parameter
+    def __init__(self, lang="en-us", samplerate=48000, device_index=4):  # Add device_index parameter
         self.q = queue.Queue()
         self.model = Model(lang=lang)
         self.samplerate = samplerate
@@ -29,3 +29,15 @@ class ContinuousSpeechToText:
     def stop(self):
         self.stream.stop()
         self.stream.close()
+
+# Remember to stop the stream when your application exits
+if __name__ == "__main__":
+    try:
+        cstt = ContinuousSpeechToText()
+        while True:
+            result = cstt.run()
+            if result:
+                print(result)
+    except KeyboardInterrupt:
+        cstt.stop()
+        print("Terminated by user")
