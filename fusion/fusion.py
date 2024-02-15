@@ -18,6 +18,9 @@ def main():
                         domain_name = text[13:][:-8].replace(' ','')
                         webbrowser.open(f"https://www.{domain_name}.com")
 
+                    if 'power on' in text:
+                        pass
+
     except KeyboardInterrupt: print("Application stopped.")
     except Exception as e: print(f"Error occurred: {e}")
 
