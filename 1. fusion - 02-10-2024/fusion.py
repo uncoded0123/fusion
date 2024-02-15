@@ -1,5 +1,7 @@
 # instructions for vosk: https://medium.com/analytics-vidhya/offline-speech-recognition-made-easy-with-vosk-c61f7b720215
 
+# hi Mom
+
 from speech_to_text import ContinuousSpeechToText
 import json
 import pyttsx3
