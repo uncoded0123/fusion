@@ -1,11 +1,13 @@
 # instructions for vosk: https://medium.com/analytics-vidhya/offline-speech-recognition-made-easy-with-vosk-c61f7b720215
+# change device and sample rate if not working
+
 import queue
 import sys
 import sounddevice as sd
 from vosk import Model, KaldiRecognizer
 
 class ContinuousSpeechToText:
-    def __init__(self, lang="en-us", samplerate=48000, device_index=4):  # Add device_index parameter
+    def __init__(self, lang="en-us", samplerate=48000, device_index=4):  # laptop webcam audio samplerate=48000 device_index=4, desktop=?
         self.q = queue.Queue()
         self.model = Model(lang=lang)
         self.samplerate = samplerate
