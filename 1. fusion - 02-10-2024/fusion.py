@@ -5,6 +5,7 @@ import json
 import pyttsx3
 import time
 import sounddevice as sd
+
 print(sd.query_devices())
 
 class SpeechResponder:
