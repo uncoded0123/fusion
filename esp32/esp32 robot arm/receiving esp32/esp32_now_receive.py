@@ -1,6 +1,7 @@
 # receive
 import network, espnow
 
+
 class Receive:
     def __init__(self):
         wlan = network.WLAN(network.STA_IF)
