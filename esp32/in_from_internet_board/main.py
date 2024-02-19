@@ -1,5 +1,5 @@
 import time, connect, send_recieve, servo
-
+#test 2.1
 while True:
     if send_recieve.recieve() == 'detected':
         servo.s_on('on')
