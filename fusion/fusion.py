@@ -6,7 +6,19 @@ from dotenv import load_dotenv
 import json, webbrowser, openai
 import os
 import pyttsx3
+import serial
 
+
+class Serial1:
+    def __init__(self):
+        self.ser1 = serial.Serial('ttyUSB1', 115200)
+        self.ser2 = serial.Serial('ttyUSB2', 115200)
+
+    def power(self, x='off'):
+        self.ser1.write(str(x).encode())
+
+
+# Serial1().power('on')
 
 
 class GPT:
@@ -31,11 +43,15 @@ class GPT:
     
 
 def text_to_speech(text):
-    engine = pyttsx3.init()
+    engine = pyttsx3.init("espeak")
+    voices = engine.getProperty('voices')
+    engine.setProperty('voice',voices[11].id) #English
     engine.setProperty('rate', 100)
-    # engine.setProperty('voice', engine.getProperty('voices')[17].id)
     engine.say(f"-h {text}")
     engine.runAndWait()
+
+
+
 
 
 def main():
@@ -47,12 +63,17 @@ def main():
                 text = json.loads(result).get('text', '').lower()
                 print(f'text {text}')
                 if ('fusion' in text) or ('eugune' in text):
+
                     if 'go to' in text:
                         domain_name = text[13:][:-8].replace(' ','')
                         webbrowser.open(f"https://www.{domain_name}.com")
+
                     if ('what' in text) or ('how' in text):
                         txt = gpt1.text_generator(f'{text[7:]}')
                         text_to_speech(txt)
+                    
+                    if 'power' in text:
+                        power(ser2, 'on' if 'on' in heard else 'off')
 
 
     except KeyboardInterrupt: print("Application stopped.")
