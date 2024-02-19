@@ -9,16 +9,24 @@ import pyttsx3
 import serial
 
 
+import serial.tools.list_ports
+
+ports = serial.tools.list_ports.comports()
+for port, desc, hwid in sorted(ports):
+        print(f"{port}: {desc} [{hwid}]")
+
+
 class Serial1:
     def __init__(self):
-        self.ser1 = serial.Serial('ttyUSB1', 115200)
-        self.ser2 = serial.Serial('ttyUSB2', 115200)
+        # self.ser0 = serial.Serial('/dev/ttyUSB0', 115200)
+        self.ser1 = serial.Serial('/dev/ttyUSB1', 115200)
+        # self.ser2 = serial.Serial('/dev/ttyUSB2', 115200)
 
     def power(self, x='off'):
         self.ser1.write(str(x).encode())
 
 
-# Serial1().power('on')
+Serial1().power('off')
 
 
 class GPT:
@@ -51,9 +59,6 @@ def text_to_speech(text):
     engine.runAndWait()
 
 
-
-
-
 def main():
     cstt = ContinuousSpeechToText()
     try:
@@ -69,16 +74,17 @@ def main():
                         webbrowser.open(f"https://www.{domain_name}.com")
 
                     if ('what' in text) or ('how' in text):
-                        txt = gpt1.text_generator(f'{text[7:]}')
+                        txt = gpt_obj.text_generator(f'{text[7:]}')
                         text_to_speech(txt)
                     
                     if 'power' in text:
-                        power(ser2, 'on' if 'on' in heard else 'off')
+                        ser_obj.power('on' if ' on' in text else 'off')
 
 
     except KeyboardInterrupt: print("Application stopped.")
     except Exception as e: print(f"Error occurred: {e}")
 
 if __name__ == "__main__":
-    gpt1 = GPT()
+    gpt_obj = GPT()
+    ser_obj = Serial1()
     main()
