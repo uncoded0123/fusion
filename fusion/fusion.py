@@ -7,10 +7,11 @@ import json, webbrowser, openai
 import os
 import pyttsx3
 import serial
+import requests
+
 
 
 import serial.tools.list_ports
-
 ports = serial.tools.list_ports.comports()
 for port, desc, hwid in sorted(ports):
         print(f"{port}: {desc} [{hwid}]")
@@ -19,14 +20,14 @@ for port, desc, hwid in sorted(ports):
 class Serial1:
     def __init__(self):
         # self.ser0 = serial.Serial('/dev/ttyUSB0', 115200)
-        self.ser1 = serial.Serial('/dev/ttyUSB1', 115200)
+        # self.ser1 = serial.Serial('/dev/ttyUSB1', 115200)
         # self.ser2 = serial.Serial('/dev/ttyUSB2', 115200)
+        pass
+    # def power(self, x='off'):
+    #     self.ser1.write(str(x).encode())
 
-    def power(self, x='off'):
-        self.ser1.write(str(x).encode())
 
-
-Serial1().power('off')
+# Serial1().power('off')
 
 
 class GPT:
@@ -38,9 +39,11 @@ class GPT:
     def text_generator(self, prompt):
         stream = self.client.chat.completions.create(
             model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": f"clear and concise as possible, in less than 20 words, {prompt}"}],
+            messages=[{"role": "user", "content": f"clear and concise as possible,
+                       in less than 20 words, your name is fusion, you are like jarvis,
+                        {prompt}"}],
             stream=True,
-            max_tokens=50)
+            max_tokens=40)
         answer_lst = []
         for chunk in stream:
             if chunk.choices[0].delta.content is not None:
@@ -53,7 +56,7 @@ class GPT:
 def text_to_speech(text):
     engine = pyttsx3.init("espeak")
     voices = engine.getProperty('voices')
-    engine.setProperty('voice',voices[11].id) #English
+    engine.setProperty('voice',voices[11].id) #English = 11
     engine.setProperty('rate', 100)
     engine.say(f"-h {text}")
     engine.runAndWait()
@@ -67,18 +70,26 @@ def main():
             if result:
                 text = json.loads(result).get('text', '').lower()
                 print(f'text {text}')
-                if ('fusion' in text) or ('eugune' in text):
+                if ('hey fusion' in text) or ('a fusion' in text):
 
                     if 'go to' in text:
                         domain_name = text[13:][:-8].replace(' ','')
                         webbrowser.open(f"https://www.{domain_name}.com")
 
-                    if ('what' in text) or ('how' in text):
+                    elif ('punk' in text) or ('park' in text):
+                        text_to_speech("hey, don't call me punk")
+
+                    elif (('what' in text) or ('how' in text)or ('is' in text)
+                           or ('tell' in text)):
                         txt = gpt_obj.text_generator(f'{text[7:]}')
                         text_to_speech(txt)
                     
-                    if 'power' in text:
-                        ser_obj.power('on' if ' on' in text else 'off')
+                    elif 'power on' in text:
+                        requests.get(f"{os.getenv('URL')}/data_test1/on")
+                        # ser_obj.power('on' if ' on' in text else 'off')
+                    
+                    elif "power off" in text:
+                        requests.get(f"{os.getenv('URL')}/data_test1/off")
 
 
     except KeyboardInterrupt: print("Application stopped.")
