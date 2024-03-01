@@ -39,9 +39,7 @@ class GPT:
     def text_generator(self, prompt):
         stream = self.client.chat.completions.create(
             model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": f"clear and concise as possible,
-                       in less than 20 words, your name is fusion, you are like jarvis,
-                        {prompt}"}],
+            messages=[{"role": "user", "content": f"clear and concise as possible, in less than 20 words {prompt}"}],
             stream=True,
             max_tokens=40)
         answer_lst = []
@@ -56,7 +54,7 @@ class GPT:
 def text_to_speech(text):
     engine = pyttsx3.init("espeak")
     voices = engine.getProperty('voices')
-    engine.setProperty('voice',voices[11].id) #English = 11
+    engine.setProperty('voice',voices[11].id) #English
     engine.setProperty('rate', 100)
     engine.say(f"-h {text}")
     engine.runAndWait()
@@ -90,6 +88,7 @@ def main():
                     
                     elif "power off" in text:
                         requests.get(f"{os.getenv('URL')}/data_test1/off")
+
 
 
     except KeyboardInterrupt: print("Application stopped.")
