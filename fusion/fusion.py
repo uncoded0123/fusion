@@ -1,4 +1,4 @@
-# # instructions for vosk: https://medium.com/analytics-vidhya/offline-speech-recognition-made-easy-with-vosk-c61f7b720215
+# instructions for vosk: https://medium.com/analytics-vidhya/offline-speech-recognition-made-easy-with-vosk-c61f7b720215
 # change device and sample rate in speech_to_text,py if not working
 
 from dotenv import load_dotenv
