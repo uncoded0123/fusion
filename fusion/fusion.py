@@ -10,7 +10,6 @@ import serial
 import requests
 
 
-
 import serial.tools.list_ports
 ports = serial.tools.list_ports.comports()
 for port, desc, hwid in sorted(ports):
@@ -38,8 +37,10 @@ class GPT:
 
     def text_generator(self, prompt):
         stream = self.client.chat.completions.create(
+            
             model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": f"clear and concise as possible, in less than 20 words {prompt}"}],
+            messages=[{"role": "user", "content": f"clear, concise, < 20 words: {prompt}"}],
+                    #   {"role": "system", "content": "your name is fusion, you are like Jarvis from ironman"}],
             stream=True,
             max_tokens=40)
         answer_lst = []
@@ -55,7 +56,7 @@ def text_to_speech(text):
     engine = pyttsx3.init("espeak")
     voices = engine.getProperty('voices')
     engine.setProperty('voice',voices[11].id) #English
-    engine.setProperty('rate', 100)
+    engine.setProperty('rate', 110)
     engine.say(f"-h {text}")
     engine.runAndWait()
 
@@ -71,15 +72,15 @@ def main():
                 if ('hey fusion' in text) or ('a fusion' in text):
 
                     if 'go to' in text:
-                        domain_name = text[13:][:-8].replace(' ','')
+                        domain_name = text[17:][:-8].replace(' ','')
                         webbrowser.open(f"https://www.{domain_name}.com")
 
                     elif ('punk' in text) or ('park' in text):
                         text_to_speech("hey, don't call me punk")
 
-                    elif (('what' in text) or ('how' in text)or ('is' in text)
-                           or ('tell' in text)):
-                        txt = gpt_obj.text_generator(f'{text[7:]}')
+                    elif (('what' in text) or ('how' in text) or ('is' in text)
+                           or ('tell' in text) or ('you' in text)):
+                        txt = gpt_obj.text_generator(f'{text[11:]}')
                         text_to_speech(txt)
                     
                     elif 'power on' in text:
