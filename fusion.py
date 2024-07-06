@@ -1,6 +1,7 @@
 # instructions for vosk: https://medium.com/analytics-vidhya/offline-speech-recognition-made-easy-with-vosk-c61f7b720215
 # change device and sample rate in speech_to_text,py if not working
 
+from types import UnionType
 from dotenv import load_dotenv
 import json, webbrowser, openai
 import os
@@ -149,12 +150,10 @@ class Main:
                             txt = gpt_obj.text_generator(f'{text[11:]}')
                             tts.text_to_speech(txt)
                         
-                        elif 'power on' in text:
-                            requests.get(f"{os.getenv('URL')}/data_test1/on")
-                            # ser_obj.power('on' if ' on' in text else 'off')
-                        
-                        elif "power off" in text:
-                            requests.get(f"{os.getenv('URL')}/data_test1/off")
+                        elif ('fan' in text) or ('ban' in text) or ('light' in text):
+                            #requests.get(f"{os.getenv('URL')}/data_test1/on")
+                            # requests.get(f"{os.getenv('URL')}/fusion/on")
+                            requests.get(f"{os.getenv('URL')}/fusion/{text}")
 
         except KeyboardInterrupt: print("Application stopped.")
         except Exception as e: print(f"Error occurred: {e}")
