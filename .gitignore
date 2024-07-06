@@ -1,4 +1,18 @@
+# Virtual environment
+fusion/
+venv/
+
+# Environment variable files
 .env
+
+# Python cache
 __pycache__/
-*.pyc
+*.py[cod]
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
 ssid_password.py
