@@ -1,6 +1,5 @@
 # check mic location port number
 
-
 import whisper
 from openai import OpenAI
 import subprocess
@@ -9,16 +8,13 @@ import webbrowser
 import requests
 
 
-
-
 class Assistant:
     def __init__(self):
         # load_dotenv()
         self.model = whisper.load_model("base")
         self.client = OpenAI(
             api_key=os.getenv("DEEPINFRA_API_KEY"),  # <- Replace this
-            base_url="https://api.deepinfra.com/v1/openai"
-        )
+            base_url="https://api.deepinfra.com/v1/openai")
         
     def listen(self, duration=5):
         filename = 'audio.wav'
@@ -38,8 +34,7 @@ class Assistant:
             response = self.client.chat.completions.create(
                 model="meta-llama/Meta-Llama-3-70B-Instruct",
                 messages=[{"role": "user", "content": f"clear, concise, < 25 words: {text}"}],
-                max_tokens=40
-            )
+                max_tokens=40)
             return response.choices[0].message.content
         except Exception as e:
             print(f"DeepInfra API error: {e}")
@@ -50,7 +45,7 @@ class Assistant:
         subprocess.run(["espeak", text], check=True)
     
     def run(self):
-        print("Listening... (waiting for 'hey fusion' or 'hey vision')")
+        print("waiting for wake words)")
         while True:
             try:
                 text = self.listen().lower()
@@ -58,10 +53,8 @@ class Assistant:
                 if any(x in text for x in ['hey fusion', 'hi fusion', 'hey vision', 'a fusion']):
                     print("Wake word detected!")
 
-
                     if 'go to' in text:
                         webbrowser.open(f"https://www.{text[18:-1].replace(' ','')}")
-
 
                     elif any(x in text for x in ['what', 'how', 'tell', 'can']):
                         # self.speak(self.think(text[11:]))
@@ -69,9 +62,6 @@ class Assistant:
                         response = self.think(text)
                         print(f"DeepInfra response: {response}")
                         self.speak(response)
-
-
-
 
                     elif ('kitchen' in text) and (' on' in text):
                         requests.get(f"{os.getenv('URL')}/kitchen_on")
@@ -83,9 +73,6 @@ class Assistant:
                     elif (('mower' in text) or ('more' in text)) and (' on' in text):
                         requests.get(f"{os.getenv('URL')}/mower_on")
 
-
-
-
                     elif ('kitchen' in text) and (' off' in text):
                         requests.get(f"{os.getenv('URL')}/kitchen_off")
                         requests.get(f"{os.getenv('URL2')}/fusion/Turn_Off")
@@ -96,8 +83,6 @@ class Assistant:
                     elif (('mower' in text) or ('more' in text)) and (' off' in text):
                         requests.get(f"{os.getenv('URL')}/mower_off")
                         
-
-
                     elif (any(x in text for x in ['kitchen', 'living room', 'mower', 'mower'])
                           and ('off' in text)):
                         requests.get(f"{os.getenv('URL')}/off")
