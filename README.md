@@ -13,3 +13,5 @@ if bluetooth earbuds not working:
         text = self.model.transcribe(filename)["text"].lower()
         print(f"Transcribed text: {text}")
         return text
+
+That should fix it
