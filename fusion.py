@@ -6,24 +6,33 @@ import subprocess
 import os
 import webbrowser
 import requests
+from dotenv import load_dotenv
 
 
 class Assistant:
     def __init__(self):
-        # load_dotenv()
+        load_dotenv()
         self.model = whisper.load_model("base")
         self.client = OpenAI(
             api_key=os.getenv("DEEPINFRA_API_KEY"),  # <- Replace this
             base_url="https://api.deepinfra.com/v1/openai")
         
-    def listen(self, duration=5):
+    # def listen(self, duration=5):
+    #     filename = 'audio.wav'
+    #     try:
+    #         subprocess.run(['arecord', '-D', 'hw:1,0', '-f', 'S16_LE', '-c1', 
+    #                     '-r', '48000', '-d', str(duration), filename], check=True)
+    #     except:
+    #         subprocess.run(['arecord', '-D', 'hw:4,0', '-f', 'S16_LE', '-c1', 
+    #                     '-r', '48000', '-d', str(duration), filename], check=True)
+    #     text = self.model.transcribe(filename)["text"].lower()
+    #     print(f"Transcribed text: {text}")
+    #     return text
+
+    def listen(self, duration=7):
         filename = 'audio.wav'
-        try:
-            subprocess.run(['arecord', '-D', 'hw:1,0', '-f', 'S16_LE', '-c1', 
-                        '-r', '48000', '-d', str(duration), filename], check=True)
-        except:
-            subprocess.run(['arecord', '-D', 'hw:4,0', '-f', 'S16_LE', '-c1', 
-                        '-r', '48000', '-d', str(duration), filename], check=True)
+        subprocess.run(['ffmpeg', '-f', 'pulse', '-i', 'bluez_input.A1_A7_25_B6_57_82.0', 
+               '-t', str(duration), '-y', filename])
         text = self.model.transcribe(filename)["text"].lower()
         print(f"Transcribed text: {text}")
         return text
@@ -33,8 +42,8 @@ class Assistant:
         try:
             response = self.client.chat.completions.create(
                 model="meta-llama/Meta-Llama-3-70B-Instruct",
-                messages=[{"role": "user", "content": f"clear, concise, < 25 words: {text}"}],
-                max_tokens=40)
+                messages=[{"role": "user", "content": f"clear, concise, < 40 words: {text}"}],
+                max_tokens=100)
             return response.choices[0].message.content
         except Exception as e:
             print(f"DeepInfra API error: {e}")
@@ -64,6 +73,16 @@ class Assistant:
                         self.speak(response)
 
                     elif ('kitchen' in text) and (' on' in text):
+                        requests.get(f"{os.getenv('URL')}/kitchen_on")
+                        requests.get(f"{os.getenv('URL2')}/Turn_On")
+
+                    elif ('remote' in text) and (' off' in text):
+                        print('-------------------------------------remote offf')
+                        requests.get(f"{os.getenv('URL')}/kitchen_off")
+                        requests.get(f"{os.getenv('URL2')}/Turn_Off")
+
+                    elif ('remote' in text) and (' on' in text):
+                        print('-------------------------------------remote onnn')
                         requests.get(f"{os.getenv('URL')}/kitchen_on")
                         requests.get(f"{os.getenv('URL2')}/Turn_On")
                     
